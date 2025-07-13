@@ -1,0 +1,205 @@
+# Three.js Performance Dashboard
+
+Dit project biedt een modulair dashboard voor het monitoren, debuggen en optimaliseren van React Three Fiber / Three.js-experimenten. Het bevat realtime performance-statistieken, een action bar met controls en uitbreidbare modules voor stress tests, LOD demonstraties en shader-visualisatie.
+
+---
+
+## 🎯 Doel
+
+* **Realtime monitoring** van FPS, render-tijden, memory- en GPU-load.
+* **Action Bar** met toggles en buttons om performance-analyses te activeren.
+* **Uitbreidbare modules** voor stress testing, LOD-demo en shader-inspectie.
+* **Eenvoudige integratie** met bestaande React Three Fiber projecten.
+
+---
+
+## 📦 Projectstructuur
+
+```text
+/ ├── public/                  # Statische assets
+   ├── src/                     # Broncode
+   │   ├── components/          # Herbruikbare UI- en stats-componenten
+   │   │   ├── HudPanel.tsx     # Overzicht van performance-statistieken
+   │   │   ├── ActionBar.tsx    # Controls (toggles, buttons)
+   │   │   ├── modules/         # Uitbreidingsmodules
+   │   │   │   ├── StressTest.tsx
+   │   │   │   ├── LodDemo.tsx
+   │   │   │   └── ShaderViz.tsx
+   │   │   └── stats/           # Integraties met stats.js, perf-monitor
+   │   │       ├── StatsMonitor.ts
+   │   │       └── GpuStats.ts
+   │   ├── hooks/               # Custom hooks (usePerformance)
+   │   ├── scenes/              # Demo scenes (RotatingCube, MaterialSpheres)
+   │   ├── App.tsx              # Hoofd-applicatie wrapper
+   │   └── index.tsx            # Entry point
+   ├── package.json
+   └── README.md                # Deze documentatie
+```
+
+---
+
+## 🚀 Installatie
+
+1. **Clone repository**
+
+   ```bash
+   ```
+
+git clone [https://github.com/jouw-gebruikersnaam/threejs-performance-dashboard.git](https://github.com/jouw-gebruikersnaam/threejs-performance-dashboard.git)
+cd threejs-performance-dashboard
+
+````
+2. **Dependencies installeren**
+   ```bash
+npm install
+# of met yarn
+yarn install
+````
+
+3. **Development server starten**
+
+   ```bash
+   ```
+
+npm run dev
+
+# of
+
+yarn dev
+
+```
+4. **Open je browser** op `http://localhost:3000` om de demo’s te bekijken.
+
+---
+## 🔧 Functionaliteits-stappen voor een coding agent
+
+1. **Initialisatie**
+   - Start de React-applicatie.
+   - Mount React Three Fiber canvas in `App.tsx`.
+   - Importeer en activeer de `HudPanel` en `ActionBar` componenten.
+2. **Performance monitoring**
+   - **FPS & MS/frame**: gebruik `stats.js` via `StatsMonitor.ts`.
+   - **GPU & geheugen**: integreer `three-performance-monitor` en/of `three-gpu-stats` in `GpuStats.ts`.
+   - Publiceer hooks in `usePerformance.ts` die de gemeten data via React Context beschikbaar maken.
+3. **UI-rendering**
+   - In `HudPanel.tsx`:
+     - Lees performance data uit context.
+     - Render realtime meters: sparklines, donut charts en kleurcodering.
+   - In `ActionBar.tsx`:
+     - Maak toggles (`lil-gui` of simpel via state) voor:
+       - Wireframe mode
+       - Stats zichtbaarheid
+       - Logging on/off
+     - Buttons voor:
+       - `Stress Test` (activeert module)
+       - `Export Logs` (download JSON)
+       - `Reset Scene`
+4. **Uitbreidingsmodules**
+   - **StressTest.tsx**:
+     - Functie `generateStressMesh(count: number)`.
+     - Measure FPS drop-off.
+     - Toon resultaten in chart.
+   - **LodDemo.tsx**:
+     - Voorzie meerdere LOD-levels op één model.
+     - Toon slider om LOD-level live te veranderen.
+     - Plot FPS vs LOD.
+   - **ShaderViz.tsx**:
+     - Laad GLSL-shaders via `ShaderMaterial`.
+     - Toon compile-tijd en render impact.
+5. **Data-export & logging**
+   - Implementatie in `usePerformance`:
+     - Accumuleer statistieken in geheugen.
+     - Exporteer JSON via `Export Logs` button.
+6. **Configuratie & presets**
+   - Voorzie `StatsPreset` context:
+     - `Basic` (FPS + MS)
+     - `Advanced` (+ GPU, memory)
+     - `Debug` (+ modules, logs)
+   - Maak preset-select dropdown in `ActionBar`.
+
+---
+## 📑 Linting & Testing
+
+- **Lint**: `npm run lint` (ESLint + Prettier)
+- **Unit tests**: `npm run test` (Jest + React Testing Library)
+- **Performance test**: Stress test via module en registreer resultaten in CI.
+
+---
+## 📚 Externe Dependencies
+
+| Library                      | Doel                                    |
+|------------------------------|-----------------------------------------|
+| `react-three-fiber`          | Three.js in React                       |
+| `stats.js`                   | FPS & render time monitor              |
+| `three-performance-monitor`  | Diepere performance breakdown          |
+| `three-gpu-stats`            | GPU geheugenstatistieken               |
+| `lil-gui`                    | Control panel UI                       |
+| `react-chartjs-2` of `recharts` | Charts voor sparklines en donut       |
+
+---
+## 🛠️ Roadmap & Toekomstige Versies
+
+Om je Three.js Performance Dashboard nog verder uit te werken, hebben we belangrijke debug- en optimalisatie-elementen voor toekomstige releases (v2, v3) geïdentificeerd. Voeg deze roadmap toe aan je README met duidelijke afbakening per versie.
+
+---
+### 🚀 Versie 2.0: Geavanceerde Debug & Integratie
+
+1. **Scene Graph Inspector**
+   - Visuele boomstructuur van de scene in een sidepanel.
+   - Live highlighten en selecteren van objecten om properties aan te passen.
+2. **Network & Asset Loading Monitor**
+   - Tracking van laadtijden per resource (models, textures, shaders).
+   - Grafiek van totale laadtijd en piekmomenten.
+3. **Error Overlay & Logging Panel**
+   - Overlay die runtime errors en warnings direct in de canvas toont.
+   - Gestapelde Console-panel met filteropties (Error, Warn, Info).
+4. **Hot Module Reloading (HMR) voor Shaders**
+   - Live herladen van GLSL-shaderbestanden zonder volledige reload.
+   - Toon compile-fouten inline.
+5. **Performance Trace & Flamegraph**
+   - Capture CPU/GPU trace events (via User Timing API).
+   - Toon flamegraphs voor gedetailleerde hot path analyse.
+6. **External APM Integratie**
+   - Koppel met externe Application Performance Monitoring (bv. Sentry, New Relic) voor cross-app metrics.
+7. **Telemetry & Remote Monitoring**
+   - Optioneel inschakelbare telemetrie die sessiedata (FPS, errors) naar een backend stuurt.
+   - Dashboard-view voor meervoudige sessies live bekijken.
+
+---
+### 🌐 Versie 3.0: Intelligente Automatisering & Collaboration
+
+1. **AI-gedreven Optimalisatie Suggesties**
+   - Analyse van performance data en aanbevelingen (bv. instancing, LOD-levels aanpassen).
+   - Automatische code-fixes voorstellen voor hotspots.
+2. **Anomaly Detection & Alerts**
+   - Machine learning model dat afwijkende performance detecteert.
+   - Push-notificaties of e-mails bij kritieke degradaties.
+3. **Plugin- & Extensibility Framework**
+   - Plugin API voor derden om custom modules toe te voegen (bv. physics-engine metrics).
+   - Marketplace / registry voor gedeelde plugins.
+4. **Collaborative Debugging Sessions**
+   - Multi-user streaming van de canvas met gedeelde control-panel.
+   - Live commenting en annotaties op de 3D-scène.
+5. **WebXR & Multi-Device Metrics**
+   - Metrics uitbreiden naar VR/AR sessies (frame timing, sensor latency).
+   - Cross-device performance comparison.
+6. **Voice Control & Accessibility**
+   - Spraakgestuurde toggles en commands voor de action bar.
+   - Auditory feedback voor performance alerts.
+7. **Offline Logging & Replay**
+   - Logger module die alle events en metrics lokaal opslaat.
+   - Replay-functionaliteit om sessies te simuleren zonder live 3D.
+
+---
+## 📩 Vervolgstappen
+
+
+- Pas de styling aan met Tailwind CSS.
+- Voeg auth & multi-tenancy toe indien nodig.
+- Integreer in CI-pipeline voor performance regressie checks.
+
+---
+
+Voor vragen of bijdragen: zie [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+```
