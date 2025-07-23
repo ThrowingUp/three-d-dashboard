@@ -108,15 +108,6 @@ src/
 - `physics` - Physics simulations and interactions
 - `shaders` - Custom GLSL shaders
 
-## Design Philosophy
-
-This project follows Vercel's design principles:
-
-- **Minimal and clean** - Effective use of whitespace
-- **Simple** - Focus on functionality over decoration
-- **Modern** - Contemporary design patterns
-- **Responsive** - Mobile-first approach
-
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
