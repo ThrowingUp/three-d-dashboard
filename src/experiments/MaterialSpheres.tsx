@@ -4,11 +4,14 @@ import { Sphere, Float } from '@react-three/drei';
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useControls } from 'leva';
 
-function FloatingSphere({ position, color, speed }: { 
+function FloatingSphere({ position, color, speed, size, roughness }: { 
   position: [number, number, number]; 
   color: string; 
   speed: number;
+  size: number;
+  roughness: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
@@ -20,11 +23,11 @@ function FloatingSphere({ position, color, speed }: {
 
   return (
     <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-      <Sphere ref={meshRef} position={position} args={[0.5, 32, 32]}>
+      <Sphere ref={meshRef} position={position} args={[size, 32, 32]}>
         <meshStandardMaterial 
           color={color} 
           metalness={0.3}
-          roughness={0.2}
+          roughness={roughness}
         />
       </Sphere>
     </Float>
@@ -32,6 +35,11 @@ function FloatingSphere({ position, color, speed }: {
 }
 
 export default function MaterialSpheres() {
+  const { sphereSize, materialRoughness } = useControls({
+    sphereSize: { value: 1, min: 0.5, max: 3 },
+    materialRoughness: { value: 0.5, min: 0, max: 1 },
+  });
+
   const spheres = useMemo(() => [
     { position: [-2, 0, 0] as [number, number, number], color: '#ef4444', speed: 1 },
     { position: [0, 0, 0] as [number, number, number], color: '#10b981', speed: 1.5 },
@@ -51,6 +59,8 @@ export default function MaterialSpheres() {
           position={sphere.position}
           color={sphere.color}
           speed={sphere.speed}
+          size={sphereSize}
+          roughness={materialRoughness}
         />
       ))}
     </>

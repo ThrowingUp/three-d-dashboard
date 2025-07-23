@@ -11,6 +11,12 @@ export function usePerformanceMonitor() {
   const statsRef = useRef<Stats | null>(null);
   const [showStats, setShowStats] = useState(false);
   
+  const lastUpdateRef = useRef(performance.now());
+  const frameCountRef = useRef(0);
+  const fpsBufferRef = useRef<number[]>([]);
+  const frameTimeBufferRef = useRef<number[]>([]);
+  const lastFrameTimeRef = useRef(performance.now());
+  
   // Initialize stats.js
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -44,36 +50,64 @@ export function usePerformanceMonitor() {
   useFrame(() => {
     if (!isRecording) return;
     
-    if (statsRef.current) {
-      statsRef.current.begin();
+    const now = performance.now();
+    const frameDelta = now - lastFrameTimeRef.current;
+    lastFrameTimeRef.current = now;
+    
+    // Calculate instantaneous FPS and frame time
+    const instantFps = 1000 / frameDelta;
+    
+    // Add to buffers for smoothing
+    fpsBufferRef.current.push(instantFps);
+    frameTimeBufferRef.current.push(frameDelta);
+    
+    // Keep buffer size reasonable (60 frames = ~1 second at 60fps)
+    if (fpsBufferRef.current.length > 60) {
+      fpsBufferRef.current.shift();
+    }
+    if (frameTimeBufferRef.current.length > 60) {
+      frameTimeBufferRef.current.shift();
     }
     
-    // Collect performance data
-    const info = gl.info;
-    const memory = (performance as any).memory;
+    frameCountRef.current++;
     
-    const performanceData: PerformanceData = {
-      fps: Math.round(1 / (performance.now() - (window as any).lastTime || 16) * 1000) || 60,
-      frameTime: performance.now() - ((window as any).lastTime || performance.now()),
-      drawCalls: info.render.calls,
-      geometries: info.memory.geometries,
-      textures: info.memory.textures,
-      programs: info.programs?.length || 0,
-      memoryUsage: {
+    // Update performance data every 10 frames (~6 times per second at 60fps) for smoother updates
+    if (frameCountRef.current % 10 === 0) {
+      if (statsRef.current) {
+        statsRef.current.begin();
+      }
+      
+      // Calculate smoothed averages
+      const avgFps = fpsBufferRef.current.reduce((a, b) => a + b, 0) / fpsBufferRef.current.length;
+      const avgFrameTime = frameTimeBufferRef.current.reduce((a, b) => a + b, 0) / frameTimeBufferRef.current.length;
+      
+      // Collect performance data
+      const info = gl.info;
+      
+      const performanceData: PerformanceData = {
+        fps: Math.round(avgFps),
+        frameTime: Math.round(avgFrameTime * 10) / 10, // Round to 1 decimal place
+        drawCalls: info.render.calls,
         geometries: info.memory.geometries,
         textures: info.memory.textures,
         programs: info.programs?.length || 0,
-      },
-      gpuLoad: 0, // Placeholder - would need WebGL extensions for real GPU load
-      visibleMeshes: countVisibleMeshes(scene),
-      timestamp: Date.now(),
-    };
-    
-    addDataPoint(performanceData);
-    (window as any).lastTime = performance.now();
-    
-    if (statsRef.current) {
-      statsRef.current.end();
+        memoryUsage: {
+          geometries: info.memory.geometries,
+          textures: info.memory.textures,
+          programs: info.programs?.length || 0,
+          total: info.memory.geometries + info.memory.textures,
+        },
+        gpuLoad: 0, // Placeholder - would need WebGL extensions for real GPU load
+        visibleMeshes: countVisibleMeshes(scene),
+        triangles: info.render.triangles || 0,
+        timestamp: Date.now(),
+      };
+
+      addDataPoint(performanceData);
+      
+      if (statsRef.current) {
+        statsRef.current.end();
+      }
     }
   });
   

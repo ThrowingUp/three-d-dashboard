@@ -7,6 +7,7 @@ import { PerspectiveCamera } from '@react-three/drei';
 // @ts-expect-error: No types for @react-three/postprocessing
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
+import { useControls } from 'leva';
 
 /**
  * Mouse-following glowing sphere with bloom and color burst effect.
@@ -20,6 +21,11 @@ function MouseFollowGlow() {
   const targetColor = new THREE.Color(0x00fff0);
   const white = new THREE.Color(0xffffff);
   const lastMouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const settings = useControls({
+    glowIntensity: { value: 1, min: 0, max: 5 },
+    followSpeed: { value: 0.5, min: 0.1, max: 2 },
+  });
 
   // Animate sphere and light to follow mouse, and handle color burst
   useFrame(() => {

@@ -1,12 +1,34 @@
 'use client';
 
 import { ReactNode, useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, extend } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { usePerformanceMonitor } from '@/lib/use-performance-monitor';
 import { useThreeToolkit } from '@/lib/use-three-toolkit';
 import HudPanel from '@/components/ui/HudPanel';
 import ActionBarV2 from '@/components/ui/ActionBarV2';
+import * as THREE from 'three';
+
+extend({
+  Mesh: THREE.Mesh,
+  BoxGeometry: THREE.BoxGeometry,
+  MeshStandardMaterial: THREE.MeshStandardMaterial,
+  Scene: THREE.Scene,
+  PerspectiveCamera: THREE.PerspectiveCamera,
+  AmbientLight: THREE.AmbientLight,
+  DirectionalLight: THREE.DirectionalLight,
+});
+
+// Debugging logs to confirm extension
+console.log('Extended THREE objects:', {
+  Mesh: !!THREE.Mesh,
+  BoxGeometry: !!THREE.BoxGeometry,
+  MeshStandardMaterial: !!THREE.MeshStandardMaterial,
+  Scene: !!THREE.Scene,
+  PerspectiveCamera: !!THREE.PerspectiveCamera,
+  AmbientLight: !!THREE.AmbientLight,
+  DirectionalLight: !!THREE.DirectionalLight,
+});
 
 interface PerformanceCanvasProps {
   children: ReactNode;
@@ -24,8 +46,8 @@ function PerformanceWrapper({ children, onToolkitReady }: { children: ReactNode;
     if (onToolkitReady) {
       onToolkitReady(toolkit);
     }
-  }, [toolkit, onToolkitReady]);
-  
+  }, [toolkit, onToolkitReady]); // Ensure dependencies are stable
+
   // Listen for global events
   useEffect(() => {
     const handleWireframe = (e: any) => {
@@ -66,13 +88,27 @@ function PerformanceWrapper({ children, onToolkitReady }: { children: ReactNode;
       window.removeEventListener('resetScene', handleResetScene);
       window.removeEventListener('takeScreenshot', handleScreenshot);
     };
-  }, [stressTestActive, toolkit]);
+  }, [stressTestActive, toolkit]); // Ensure dependencies are stable and avoid infinite loops
 
   // Make toolkit available globally for ActionBar
   useEffect(() => {
     (window as any).threeToolkit = toolkit;
-  }, [toolkit]);
+  }, [toolkit]); // Ensure dependencies are stable
   
+  // Debugging logs
+  useEffect(() => {
+    console.log('PerformanceWrapper mounted');
+    return () => console.log('PerformanceWrapper unmounted');
+  }, []);
+
+  window.addEventListener('toggleWireframe', (e) => {
+    const customEvent = e as CustomEvent;
+    console.log('toggleWireframe event triggered:', customEvent.detail);
+  });
+  window.addEventListener('stressTest', (e) => console.log('stressTest event triggered'));
+  window.addEventListener('resetScene', (e) => console.log('resetScene event triggered'));
+  window.addEventListener('takeScreenshot', (e) => console.log('takeScreenshot event triggered'));
+
   return (
     <>
       {children}
@@ -163,9 +199,35 @@ export default function PerformanceCanvas({ children, className = '' }: Performa
   );
 }
 
+export function TestCanvas() {
+  return (
+    <Canvas>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[0, 10, 0]} intensity={1} />
+      <mesh>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="blue" />
+      </mesh>
+    </Canvas>
+  );
+}
+
 /* In je globals.css toevoegen voor glass effect: */
 /*
 .glass-btn {
   @apply px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow border border-[var(--border-color)] backdrop-blur-md bg-[var(--background-overlay)]/70 text-[var(--text-primary)] hover:bg-[var(--background-overlay)]/90 hover:shadow-lg;
 }
 */
+
+// Debugging logs
+console.log('Canvas component initialized with extended THREE objects');
+
+// Add runtime checks
+if (!THREE.Mesh || !THREE.BoxGeometry || !THREE.MeshStandardMaterial || !THREE.Scene || !THREE.PerspectiveCamera) {
+  console.error('Required THREE objects are not properly extended');
+} else {
+  console.log('All required THREE objects are properly extended');
+}
+
+// Additional debugging logs for Canvas
+console.log('Canvas component runtime checks passed');

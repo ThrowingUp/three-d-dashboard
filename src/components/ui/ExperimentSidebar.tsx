@@ -59,6 +59,8 @@ export default function ExperimentSidebar({
     window.location.reload();
   };
 
+  const selectedExperiment = experiments.find(exp => exp.id === currentExperiment);
+
   return (
     <div
       className={
@@ -168,7 +170,7 @@ export default function ExperimentSidebar({
                   onClick={() => onExperimentSelect(experiment.id)}
                   type="button"
                   tabIndex={0}
-                  className={`w-full text-left p-3 rounded-md transition-colors duration-150 pointer-events-auto flex flex-col items-start focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] border ${currentExperiment === experiment.id ? 'bg-[var(--brand-primary)/15] border-[var(--brand-primary)]' : 'border-transparent'} bg-transparent hover:bg-[var(--background-secondary)] focus:bg-[var(--background-secondary)]`}
+                  className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-150 pointer-events-auto flex flex-col items-start focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] border ${currentExperiment === experiment.id ? 'bg-[var(--brand-primary)/15] border-[var(--brand-primary)]' : 'border-transparent'} hover:!bg-[var(--background-secondary)] focus:!bg-[var(--background-secondary)]`}
                 >
                   <div className="w-full">
                     {/* Title */}
@@ -178,10 +180,6 @@ export default function ExperimentSidebar({
                         : 'text-[var(--text-primary)]'
                       }`}>
                       {experiment.title}
-                    </p>
-                    {/* Description */}
-                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
-                      {experiment.description}
                     </p>
                     {/* Tags - max 2 */}
                     <div className="flex items-center mt-1.5 gap-1.5">

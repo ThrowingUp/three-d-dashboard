@@ -136,6 +136,12 @@ export default function GlowGrid() {
     depthWrite: false
   });
 
+  // Additional settings for GlowGrid experiment
+  const settings = useControls({
+    gridIntensity: { value: 1, min: 0, max: 5 },
+    gridSize: { value: 10, min: 5, max: 20 },
+  });
+
   // Listen for save events from RightSidebar
   useEffect(() => {
     const handleSave = (event: CustomEvent) => {

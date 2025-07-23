@@ -3,9 +3,15 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
+import { useControls } from 'leva';
 
 export default function HexaGrids() {
   const meshRef = useRef<Mesh>(null);
+
+  const settings = useControls({
+    gridSize: { value: 10, min: 5, max: 20 },
+    gridSpacing: { value: 1, min: 0.5, max: 2 },
+  });
 
   useFrame((state) => {
     if (!meshRef.current) return;

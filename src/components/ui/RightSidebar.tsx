@@ -23,20 +23,20 @@ function PerformanceMonitor() {
     textures: 0,
   });
 
-  // Update immediately when currentData changes, then throttle updates
+  // Update immediately when currentData changes
   useEffect(() => {
     if (currentData) {
       setDisplayedMetrics(currentData);
     }
   }, [currentData]);
 
-  // Also update every 500ms for smooth display
+  // Update every 100ms for smoother display (10 FPS update rate)
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentData) {
         setDisplayedMetrics(currentData);
       }
-    }, 500);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [currentData]);

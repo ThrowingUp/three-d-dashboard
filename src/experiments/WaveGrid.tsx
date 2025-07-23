@@ -159,6 +159,12 @@ export default function WaveGrid({ levaDefaults = {}, levaKey = 'wavegrid' }: Wa
     uniformsRef.current.uTime.value = clock.getElapsedTime() % 12;
   });
 
+  // Leva settings
+  const settings = useControls({
+    waveHeight: { value: 1, min: 0, max: 5 },
+    waveSpeed: { value: 0.5, min: 0.1, max: 2 },
+  });
+
   return (
     <>
       <PerformanceMonitor />
