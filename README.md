@@ -1,6 +1,6 @@
 # Three.js Experiments
 
-An interactive Three.js playground built with Next.js, TypeScript, Tailwind CSS, and React Three Fiber. This project provides a clean, minimal interface for exploring 3D graphics concepts with a floating sidebar navigation system following Vercel's design philosophy.
+An interactive Three.js playground built with Next.js, TypeScript, Tailwind CSS, and React Three Fiber. This project provides a clean, minimal interface for exploring 3D graphics concepts with a floating sidebar navigation system.
 
 ## Features
 
